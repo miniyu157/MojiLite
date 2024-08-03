@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>Moji_Lite</RootNamespace>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>appicon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="appicon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="KlxPiaoAPI">
+      <HintPath>..\..\..\..\KlxPiao\KlxPiaoControls\bin\Release\net8.0-windows\publish\KlxPiaoAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="KlxPiaoControls">
+      <HintPath>..\..\..\..\KlxPiao\KlxPiaoControls\bin\Release\net8.0-windows\publish\KlxPiaoControls.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
