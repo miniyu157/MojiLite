@@ -247,7 +247,7 @@ namespace Moji_Lite
 
         private void MainWindow_FormClosed(object? sender, FormClosedEventArgs e)
         {
-            if (Directory.Exists(CachePath))
+            if (!Directory.Exists(CachePath))
             {
                 Directory.CreateDirectory(CachePath);
             }
