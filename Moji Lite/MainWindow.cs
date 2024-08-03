@@ -2,12 +2,34 @@ using KlxPiaoAPI;
 using KlxPiaoControls;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
+using System.Reflection;
 using System.Text;
 
 namespace Moji_Lite
 {
     public partial class MainWindow : KlxPiaoForm
     {
+        private static string? GetProductVersion()
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+
+            AssemblyInformationalVersionAttribute? productVersion =
+                (AssemblyInformationalVersionAttribute?)Attribute.GetCustomAttribute(assembly, typeof(AssemblyInformationalVersionAttribute));
+
+            if (productVersion?.InformationalVersion is string versionStr)
+            {
+                var plusSymbolIndex = versionStr.IndexOf('+');
+                if (plusSymbolIndex != -1)
+                {
+                    versionStr = versionStr[..plusSymbolIndex];
+                }
+
+                return versionStr;
+            }
+
+            return "Unknown Version";
+        }
+
         public Dictionary<string, string> SaveCities { get; set; } = [];
         private readonly string CitiesFile = $"{Path.Combine(Application.StartupPath, "cache/Cities.dat")}";
         private readonly string CityLinksFile = $"{Path.Combine(Application.StartupPath, "cache/CityLinks.dat")}";
@@ -16,7 +38,7 @@ namespace Moji_Lite
         {
             InitializeComponent();
 
-            Text = $"{Application.ProductName} {Application.ProductVersion}";
+            Text = $"{Application.ProductName} {GetProductVersion()}";
             Icon? icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
             if (icon != null)
             {
@@ -225,14 +247,19 @@ namespace Moji_Lite
 
         private void MainWindow_FormClosed(object? sender, FormClosedEventArgs e)
         {
+            if (Directory.Exists(CachePath))
+            {
+                Directory.CreateDirectory(CachePath);
+            }
+
             //±£´æÊý¾Ý
             StringBuilder citiesSb = new();
             StringBuilder cityLinksSb = new();
             SaveCities.ToList().ForEach(item =>
-            {
-                citiesSb.AppendLine(item.Key);
-                cityLinksSb.AppendLine(item.Value);
-            });
+                {
+                    citiesSb.AppendLine(item.Key);
+                    cityLinksSb.AppendLine(item.Value);
+                });
             using (var streamWriter = new StreamWriter(CitiesFile))
             {
                 streamWriter.Write(citiesSb.ToString());
