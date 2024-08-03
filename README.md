@@ -15,6 +15,6 @@
 
 ## 预览
 
-![home](screenshot/home.png)
+![home](Screenshot/home.png)
 
-![addcity](screenshot/addcity.png)
+![addcity](Screenshot/addcity.png)
