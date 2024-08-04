@@ -1,7 +1,5 @@
 # Moji Lite
 
-![icon](Moji Lite/appicon.ico)
-
 轻量级墨迹天气PC端
 
 ## 使用
