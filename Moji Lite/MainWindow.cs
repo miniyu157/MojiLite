@@ -301,6 +301,13 @@ namespace Moji_Lite
                     Welcome();
                 }
             }
+            else
+            {
+                if (citiesListBox.Items.Count == 0)
+                {
+                    Welcome();
+                }
+            }
         }
 
         private void Welcome()
