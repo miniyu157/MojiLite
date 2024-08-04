@@ -8,6 +8,10 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>appicon.ico</ApplicationIcon>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
+    <FileVersion>1.0.1</FileVersion>
+	<Copyright>KlxPiao Copyright © 2024</Copyright>
+	<Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

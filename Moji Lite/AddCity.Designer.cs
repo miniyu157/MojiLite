@@ -30,7 +30,7 @@
         {
             citiesListBox = new ListBox();
             searchTextBox = new TextBox();
-            topLabel = new Label();
+            tipLabel = new Label();
             refreshLinkLabel = new LinkLabel();
             SuspendLayout();
             // 
@@ -51,13 +51,13 @@
             searchTextBox.Size = new Size(254, 23);
             searchTextBox.TabIndex = 0;
             // 
-            // topLabel
+            // tipLabel
             // 
-            topLabel.AutoSize = true;
-            topLabel.Location = new Point(12, 460);
-            topLabel.Name = "topLabel";
-            topLabel.Size = new Size(0, 17);
-            topLabel.TabIndex = 3;
+            tipLabel.AutoSize = true;
+            tipLabel.Location = new Point(12, 460);
+            tipLabel.Name = "tipLabel";
+            tipLabel.Size = new Size(0, 17);
+            tipLabel.TabIndex = 3;
             // 
             // refreshLinkLabel
             // 
@@ -78,7 +78,7 @@
             BackColor = Color.White;
             ClientSize = new Size(278, 486);
             Controls.Add(refreshLinkLabel);
-            Controls.Add(topLabel);
+            Controls.Add(tipLabel);
             Controls.Add(searchTextBox);
             Controls.Add(citiesListBox);
             Name = "AddCity";
@@ -98,7 +98,7 @@
 
         private ListBox citiesListBox;
         private TextBox searchTextBox;
-        private Label topLabel;
+        private Label tipLabel;
         private LinkLabel refreshLinkLabel;
     }
 }

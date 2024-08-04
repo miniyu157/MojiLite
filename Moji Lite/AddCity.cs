@@ -41,7 +41,7 @@ namespace Moji_Lite
                 File.Delete(cacheCityLinksFile);
             }
 
-            Close();
+            CloseForm();
             mainWindow.addCityBut.PerformClick();
         }
 
@@ -102,12 +102,12 @@ namespace Moji_Lite
             }
             else
             {
-                topLabel.Text = $"正在获取基础数据...";
+                tipLabel.Text = $"正在获取基础数据...";
                 (bool IsSuccess, string originalText, string failMessage) = await NetworkOperations.TryGetHTMLContentAsync(requestLink);
                 if (!IsSuccess)
                 {
-                    MessageBox.Show($"请求失败：{requestLink}\r\n错误消息：{failMessage}", Application.ProductName);
-                    Close();
+                    tipLabel.Text = "加载失败";
+                    mainWindow.ShowMessage($"请求失败：{requestLink}\r\n错误消息：{failMessage}", Application.ProductName);
                     return;
                 }
                 List<string> provinceOriginalList = originalText.ExtractBetween("<div class=\"city_title\">全部省份</div>", "</div>").ExtractAllBetween("<li>", "</li>");
@@ -125,22 +125,22 @@ namespace Moji_Lite
                         return;
                     }
 
-                    topLabel.Text = $"正在加载({(float)i / (provinceDataList.Count - 1) * 100:F0}%)...";
+                    tipLabel.Text = $"正在加载({(float)i / (provinceDataList.Count - 1) * 100:F0}%)...";
 
                     string provinceName = provinceDataList.ToList()[i].Key;
                     string provinceLink = provinceDataList.ToList()[i].Value;
                     (bool IsSuccess, string content, string failMessage) cityRequest = await NetworkOperations.TryGetHTMLContentAsync(provinceLink);
                     if (!cityRequest.IsSuccess)
                     {
-                        MessageBox.Show($"请求失败：{provinceLink}\r\n错误消息：{cityRequest.failMessage}", Application.ProductName);
-                        Close();
+                        tipLabel.Text = "加载失败";
+                        mainWindow.ShowMessage($"请求失败：{provinceLink}\r\n错误消息：{cityRequest.failMessage}", Application.ProductName);
                         return;
                     }
                     List<string> cityOriginalList = cityRequest.content.ExtractBetween("<div class=\"city_hot\">", "</div>").ExtractAllBetween("<li>", "</li>", MatchMode.StringIndex);
                     cityList.AddRange(cityOriginalList.Select(item => provinceName + " " + item.ExtractBetween(">", "<")).ToList());
                     cityLinkList.AddRange(cityOriginalList.Select(item => item.ExtractBetween("href=\"", "\"")).ToList());
                 }
-                topLabel.Text = "";
+                tipLabel.Text = "";
 
                 cityData = DataUtility.MergeListsToDictionary(cityList, cityLinkList);
 
@@ -166,7 +166,7 @@ namespace Moji_Lite
             citiesListBox.Items.Clear();
             citiesListBox.Items.AddRange([.. cityData.Keys]);
 
-            topLabel.Text = $"已加载城市：{citiesListBox.Items.Count}";
+            tipLabel.Text = $"已加载城市：{citiesListBox.Items.Count}";
         }
     }
 }

@@ -4,7 +4,7 @@
 
 ## 使用
 
-单击 ```添加城市``` 以使用，可以在 [releases](https://github.com/miniyu157/MojiLite/releases) 页面下载
+- 单击 ```添加城市``` 以使用，可以在 [releases](https://github.com/miniyu157/MojiLite/releases) 页面下载
 
 ## 细节
 
