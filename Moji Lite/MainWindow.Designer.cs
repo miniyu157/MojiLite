@@ -43,6 +43,7 @@ namespace Moji_Lite
             // addCityBut
             // 
             addCityBut.FlatStyle = FlatStyle.System;
+            addCityBut.Font = new Font("等线", 9F);
             addCityBut.Location = new Point(593, 38);
             addCityBut.Name = "addCityBut";
             addCityBut.Size = new Size(88, 33);
@@ -52,6 +53,7 @@ namespace Moji_Lite
             // delCityBut
             // 
             delCityBut.FlatStyle = FlatStyle.System;
+            delCityBut.Font = new Font("等线", 9F);
             delCityBut.Location = new Point(499, 38);
             delCityBut.Name = "delCityBut";
             delCityBut.Size = new Size(88, 33);
@@ -61,18 +63,19 @@ namespace Moji_Lite
             // citiesListBox
             // 
             citiesListBox.BorderStyle = BorderStyle.None;
+            citiesListBox.Font = new Font("等线", 10.5F, FontStyle.Regular, GraphicsUnit.Point, 134);
             citiesListBox.FormattingEnabled = true;
-            citiesListBox.ItemHeight = 17;
+            citiesListBox.ItemHeight = 14;
             citiesListBox.Location = new Point(1, 5);
             citiesListBox.Name = "citiesListBox";
-            citiesListBox.Size = new Size(180, 323);
+            citiesListBox.Size = new Size(180, 308);
             citiesListBox.TabIndex = 9;
             // 
             // richTextBox1
             // 
             richTextBox1.BackColor = Color.White;
             richTextBox1.BorderStyle = BorderStyle.None;
-            richTextBox1.Font = new Font("Microsoft YaHei UI", 10.5F, FontStyle.Regular, GraphicsUnit.Point, 134);
+            richTextBox1.Font = new Font("等线", 10.5F);
             richTextBox1.Location = new Point(3, 3);
             richTextBox1.Name = "richTextBox1";
             richTextBox1.ScrollBars = RichTextBoxScrollBars.Vertical;
@@ -116,6 +119,7 @@ namespace Moji_Lite
             Margin = new Padding(4, 3, 4, 3);
             Name = "MainWindow";
             TitleBoxBackColor = Color.Linen;
+            TitleFont = new Font("等线", 10.5F, FontStyle.Regular, GraphicsUnit.Point, 134);
             TitleTextAlign = HorizontalAlignment.Center;
             panel1.ResumeLayout(false);
             panel2.ResumeLayout(false);

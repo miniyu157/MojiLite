@@ -36,37 +36,42 @@
             // 
             // citiesListBox
             // 
+            citiesListBox.Font = new Font("等线", 10.5F, FontStyle.Regular, GraphicsUnit.Point, 134);
             citiesListBox.FormattingEnabled = true;
-            citiesListBox.ItemHeight = 17;
+            citiesListBox.ItemHeight = 14;
             citiesListBox.Location = new Point(12, 75);
             citiesListBox.Name = "citiesListBox";
-            citiesListBox.Size = new Size(254, 378);
+            citiesListBox.Size = new Size(254, 368);
             citiesListBox.TabIndex = 1;
             // 
             // searchTextBox
             // 
             searchTextBox.BorderStyle = BorderStyle.FixedSingle;
+            searchTextBox.Font = new Font("等线", 9F);
             searchTextBox.Location = new Point(12, 41);
             searchTextBox.Name = "searchTextBox";
-            searchTextBox.Size = new Size(254, 23);
+            searchTextBox.Size = new Size(254, 20);
             searchTextBox.TabIndex = 0;
             // 
             // tipLabel
             // 
             tipLabel.AutoSize = true;
+            tipLabel.Font = new Font("等线", 9F);
             tipLabel.Location = new Point(12, 460);
             tipLabel.Name = "tipLabel";
-            tipLabel.Size = new Size(0, 17);
+            tipLabel.Size = new Size(55, 13);
             tipLabel.TabIndex = 3;
+            tipLabel.Text = "示例文本";
             // 
             // refreshLinkLabel
             // 
             refreshLinkLabel.ActiveLinkColor = Color.Black;
             refreshLinkLabel.AutoSize = true;
+            refreshLinkLabel.Font = new Font("等线", 9F);
             refreshLinkLabel.LinkColor = Color.Black;
             refreshLinkLabel.Location = new Point(186, 460);
             refreshLinkLabel.Name = "refreshLinkLabel";
-            refreshLinkLabel.Size = new Size(80, 17);
+            refreshLinkLabel.Size = new Size(79, 13);
             refreshLinkLabel.TabIndex = 2;
             refreshLinkLabel.TabStop = true;
             refreshLinkLabel.Text = "重新加载列表";
@@ -89,6 +94,7 @@
             Text = "添加城市";
             TitleBoxBackColor = Color.Linen;
             TitleButtons = TitleButtonStyle.CloseOnly;
+            TitleFont = new Font("等线", 9F, FontStyle.Regular, GraphicsUnit.Point, 134);
             TitleTextAlign = HorizontalAlignment.Center;
             ResumeLayout(false);
             PerformLayout();

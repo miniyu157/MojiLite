@@ -1,14 +1,82 @@
 using KlxPiaoAPI;
 using KlxPiaoControls;
 using System.Diagnostics;
-using System.Drawing.Drawing2D;
 using System.Reflection;
-using System.Text;
 
 namespace Moji_Lite
 {
     public partial class MainWindow : KlxPiaoForm
     {
+        private const char FULL_WIDTH_SPACE = '　';
+        private const char EN_SPACE = ' ';
+        private const string githubLink = "https://github.com/miniyu157/MojiLite";
+        private readonly string citiesFile = $"{Path.Combine(Application.StartupPath, "cache/Cities.dat")}";
+        private readonly string cityLinksFile = $"{Path.Combine(Application.StartupPath, "cache/CityLinks.dat")}";
+        private readonly string cachePath = $"{Path.Combine(Application.StartupPath, "cache")}";
+
+        internal Dictionary<string, string> SaveCities { get; set; } = [];
+
+        public MainWindow()
+        {
+            InitializeComponent();
+
+            Text = $"{Application.ProductName} {GetProductVersion()}";
+            Icon? appicon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            if (appicon != null)
+            {
+                Icon = appicon.ResetImage(new Size(20, 20));
+            }
+
+            addCityBut.Click += AddCityBut_Click;
+            delCityBut.Click += DelCityBut_Click;
+            citiesListBox.SelectedIndexChanged += CitiesListBox_SelectedIndexChanged;
+            Load += MainWindow_Load;
+            FormClosed += MainWindow_FormClosed;
+            SizeChanged += MainWindow_SizeChanged;
+            richTextBox1.LinkClicked += RichTextBox1_LinkClicked;
+            panel1.SizeChanged += Panel1_SizeChanged;
+            panel2.SizeChanged += Panel2_SizeChanged;
+            citiesListBox.DrawItem += CitiesListBox_DrawItem;
+
+            richTextBox1.SelectionIndent = 8;
+            citiesListBox.DrawMode = DrawMode.OwnerDrawFixed;
+            citiesListBox.ItemHeight = 30;
+        }
+
+        private void CitiesListBox_DrawItem(object? sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+
+            //清除背景
+            e.DrawBackground();
+
+            //设置绘制区域
+            var itemText = citiesListBox.Items[e.Index].ToString();
+            Font? font = e.Font;
+            if (font != null)
+            {
+                var textSize = e.Graphics.MeasureString(itemText, font);
+
+                //计算文本的居中位置
+                var textX = e.Bounds.X + (e.Bounds.Width - textSize.Width) / 2;
+                var textY = e.Bounds.Y + (e.Bounds.Height - textSize.Height) / 2;
+
+                //如果是选中项，设置背景色为蓝色，前景色为绿色
+                if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+                {
+                    e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(220, 220, 220)), e.Bounds); //设置背景色
+                    e.Graphics.DrawString(itemText, font, Brushes.Black, textX, textY); //设置前景色
+                }
+                else
+                {
+                    e.Graphics.DrawString(itemText, font, Brushes.Black, textX, textY); //默认前景色
+                }
+
+                //绘制焦点矩形（如果需要）
+                e.DrawFocusRectangle();
+            }
+        }
+
         private static string? GetProductVersion()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -32,40 +100,10 @@ namespace Moji_Lite
 
         private void CreateCacheFolder()
         {
-            if (!Directory.Exists(CachePath))
+            if (!Directory.Exists(cachePath))
             {
-                Directory.CreateDirectory(CachePath);
+                Directory.CreateDirectory(cachePath);
             }
-        }
-
-        internal Dictionary<string, string> SaveCities { get; set; } = [];
-        private readonly string CitiesFile = $"{Path.Combine(Application.StartupPath, "cache/Cities.dat")}";
-        private readonly string CityLinksFile = $"{Path.Combine(Application.StartupPath, "cache/CityLinks.dat")}";
-        private readonly string CachePath = $"{Path.Combine(Application.StartupPath, "cache")}";
-        public MainWindow()
-        {
-            InitializeComponent();
-
-            Text = $"{Application.ProductName} {GetProductVersion()}";
-            Icon? icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
-            if (icon != null)
-            {
-                Bitmap bitmap = icon.ToBitmap();
-                Bitmap resizedBitmap = new(bitmap, new Size(20, 20));
-                Icon resizedIcon = Icon.FromHandle(resizedBitmap.GetHicon());
-                Icon = resizedIcon;
-            }
-            addCityBut.Click += AddCityBut_Click;
-            delCityBut.Click += DelCityBut_Click;
-            citiesListBox.SelectedIndexChanged += CitiesListBox_SelectedIndexChanged;
-            Load += MainWindow_Load;
-            FormClosed += MainWindow_FormClosed;
-            SizeChanged += MainWindow_SizeChanged;
-            richTextBox1.LinkClicked += RichTextBox1_LinkClicked;
-            panel1.SizeChanged += Panel1_SizeChanged;
-            panel2.SizeChanged += Panel2_SizeChanged;
-
-            richTextBox1.SelectionIndent = 8;
         }
 
         #region 适应界面大小
@@ -153,8 +191,13 @@ namespace Moji_Lite
                 List<string> day = _data4_date.Where((item, index) => index % 2 == 1).ToList();
 
                 List<string> _data4_weather = _data4.ExtractAllBetween("<span class=\"wea\">", "</span>");
-                List<string> morningWeather = _data4_weather.Where((item, index) => index % 2 == 0).Select(item2 => { if (item2.Length == 1) item2 += "    "; return item2; }).ToList();
-                List<string> eveningWeather = _data4_weather.Where((item, index) => index % 2 == 1).Select(item2 => { if (item2.Length == 1) item2 += "    "; return item2; }).ToList();
+                List<string> morningWeather = _data4_weather.Where((item, index) => index % 2 == 0).ToList();
+                List<string> eveningWeather = _data4_weather.Where((item, index) => index % 2 == 1).ToList();
+                //获取最长文本用于对其列表
+                int longMorningWeatherLength = morningWeather.OrderByDescending(s => s.Length).First().Length;
+                int longEveningWeatherLength = eveningWeather.OrderByDescending(s => s.Length).First().Length;
+                morningWeather = morningWeather.Select(item2 => { return item2.PadRight(longMorningWeatherLength, FULL_WIDTH_SPACE) + ' '; }).ToList();
+                eveningWeather = eveningWeather.Select(item2 => { return item2.PadRight(longEveningWeatherLength, FULL_WIDTH_SPACE) + ' '; }).ToList();
 
                 List<string> _data4_icon = _data4.ExtractAllBetween("src=\"", "\"");
                 List<string> morningIcon = _data4_icon.Where((item, index) => index % 2 == 0).ToList();
@@ -164,59 +207,86 @@ namespace Moji_Lite
                 List<string> morningTemperature = _data4_temperature.Select(item => item.ExtractBetween("<b>", "</b>")).ToList();
                 List<string> eveningTemperature = _data4_temperature.Select(item => item.ExtractBetween("<strong>", "</strong>")).ToList();
 
-                async Task RichTextBoxAddImage(RichTextBox richTextBox, string url, int newWidth, int newHeight)
+                async Task RichTextBoxAddImage(RichTextBox richTextBox, string url, string cachePath, int newWidth, int newHeight)
                 {
-                    string cacheFileName = Path.Combine(CachePath, Path.GetFileName(url));
-                    Bitmap showImage;
-                    if (File.Exists(cacheFileName))
+                    try
                     {
-                        showImage = new(Image.FromFile(cacheFileName), new Size(newWidth, newHeight));
+                        string cacheFileName = Path.Combine(cachePath, Path.GetFileName(url));
+                        //从缓存或互联网加载图片
+                        Bitmap showImage = File.Exists(cacheFileName)
+                            ? new(Image.FromFile(cacheFileName))
+                            : await NetworkOperations.GetImageFromUrlAsync(url, cacheFileName);
+                        Clipboard.SetImage(showImage
+                            .ReplaceColor(Color.White, Color.FromArgb(237, 237, 237), false)
+                            .ResetImage(new Size(newWidth, newHeight), Color.White));
+                        richTextBox.Paste();
+                        Clipboard.Clear();
                     }
-                    else
+                    catch
                     {
-                        showImage = await NetworkOperations.GetImageFromUrlAsync(url, new Size(newWidth, newHeight));
-                        showImage.Save(cacheFileName); //缓存
+                        richTextBox1.Text = "加载失败";
+                        ShowMessage($"图片加载失败：{url}\r\n错误消息：{failMessage}", Application.ProductName);
+                        return;
                     }
-                    showImage = showImage.ReplaceColor(Color.White, Color.FromArgb(237, 237, 237), false);
-                    Bitmap clearBitmap = new(newWidth, newHeight);
-                    using (Graphics g = Graphics.FromImage(clearBitmap))
-                    {
-                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        g.SmoothingMode = SmoothingMode.HighQuality;
-                        g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                        g.CompositingQuality = CompositingQuality.HighQuality;
-
-                        g.Clear(richTextBox1.BackColor); //修正背景色
-                        g.DrawImage(showImage, 0, 0);
-                    }
-                    Clipboard.SetImage(clearBitmap);
-                    richTextBox.Paste();
-                    Clipboard.Clear();
                 }
                 using (RichTextBox richTextBox = new())
                 {
+                    using Bitmap bitmap = new(1, 1);
+                    using Graphics g = Graphics.FromImage(bitmap);
+
                     richTextBox.Font = richTextBox1.Font;
                     richTextBox.SelectionIndent = richTextBox1.SelectionIndent;
-                    richTextBox.AppendText($"位置: {location}\r\n");
-                    richTextBox.AppendText($"温度: {temperature}\r\n");
-                    await RichTextBoxAddImage(richTextBox, icon, 50, 50);
+
+                    Color menuColor = Color.FromArgb(69, 176, 225);
+                    Color dayColor = Color.FromArgb(119, 32, 109);
+                    Color todayColor = Color.Red;
+                    Color temperatureColor = Color.FromArgb(241, 169, 131);
+                    float temperatureFontSize = 42;
+                    Size smallIconSize = new(30, 30);
+                    int bigIconWidth = (int)g.MeasureString(weather, new Font(richTextBox.Font.FontFamily, temperatureFontSize)).Height;
+                    Size bigIconSize = new(bigIconWidth, bigIconWidth);
+
+                    richTextBox.InsertText("位置: ", menuColor);
+                    richTextBox.AppendText($"{location}\r\n");
+
+                    richTextBox.InsertText("温度: \r\n", menuColor);
+                    await RichTextBoxAddImage(richTextBox, icon, cachePath, bigIconSize.Width, bigIconSize.Height);
+                    richTextBox.InsertText($"{temperature}℃", temperatureColor, temperatureFontSize);
                     richTextBox.AppendText($"{weather}\r\n");
-                    richTextBox.AppendText($"更新: {updateTime}\r\n");
-                    richTextBox.AppendText($"湿度: {humidity}\r\n");
-                    richTextBox.AppendText($"风力: {windSpeed}\r\n");
-                    richTextBox.AppendText($"提示: {tip}\r\n");
-                    richTextBox.AppendText($"链接: {link}\r\n");
+
+                    richTextBox.InsertText("更新: ", menuColor);
+                    richTextBox.AppendText($"{updateTime}\r\n");
+
+                    richTextBox.InsertText("湿度: ", menuColor);
+                    richTextBox.AppendText($"{humidity}\r\n");
+
+                    richTextBox.InsertText("风力: ", menuColor);
+                    richTextBox.AppendText($"{windSpeed}\r\n");
+
+                    richTextBox.InsertText("提示: ", menuColor);
+                    richTextBox.AppendText($"{tip}\r\n");
+
+                    richTextBox.InsertText("链接: ", menuColor);
+                    richTextBox.AppendText($"{link}\r\n");
+
                     richTextBox.AppendText($"{new string('-', 300)}\r\n");
                     for (int i = 0; i < day.Count; i++)
                     {
-                        richTextBox.AppendText($"{week[i]} {day[i]} {morningWeather[i]}({morningTemperature[i]})");
-                        await RichTextBoxAddImage(richTextBox, morningIcon[i], 30, 30);
+                        if (i == 1)
+                        {
+                            richTextBox.InsertText($"{week[i]} {day[i]} ", todayColor);
+                        }
+                        else
+                        {
+                            richTextBox.InsertText($"{week[i]} {day[i]} ", dayColor);
+                        }
+                        richTextBox.AppendText($"{morningWeather[i]}({morningTemperature[i]})");
+                        await RichTextBoxAddImage(richTextBox, morningIcon[i], cachePath, smallIconSize.Width, smallIconSize.Height);
                         richTextBox.AppendText($" / {eveningWeather[i]}({eveningTemperature[i]})");
-                        await RichTextBoxAddImage(richTextBox, eveningIcon[i], 30, 30);
-                        if (i == 1) richTextBox.AppendText("<- 今天");
+                        await RichTextBoxAddImage(richTextBox, eveningIcon[i], cachePath, smallIconSize.Width, smallIconSize.Height);
                         richTextBox.AppendText("\r\n");
                     }
-
+                    //若用户临时删除了列表，那么数据也临时不显示了
                     if (citiesListBox.Items.Count > 0)
                     {
                         richTextBox1.Rtf = richTextBox.Rtf;
@@ -225,14 +295,15 @@ namespace Moji_Lite
             }
             else
             {
-                richTextBox1.Clear();
+                Welcome();
             }
         }
 
         private void AddCityBut_Click(object? sender, EventArgs e)
         {
+            int oldIndex = citiesListBox.SelectedIndex;
             new AddCity(this).ShowDialog();
-            if (citiesListBox.Items.Count > 0)
+            if (citiesListBox.Items.Count > 0 && oldIndex == -1)
             {
                 citiesListBox.SelectedIndex = 0;
             }
@@ -244,7 +315,8 @@ namespace Moji_Lite
             var selectedItem = citiesListBox.SelectedItem?.ToString();
             if (index > -1 && selectedItem != null)
             {
-                SaveCities.Remove(selectedItem);
+                //不直接 Remove SelectItem 是因为列表中的过长项目会缩减
+                SaveCities.Remove(SaveCities.Keys.ToList()[citiesListBox.SelectedIndex]);
                 citiesListBox.Items.RemoveAt(index);
                 citiesListBox.SelectedIndex = citiesListBox.Items.Count == index ? index - 1 : index;
             }
@@ -259,38 +331,24 @@ namespace Moji_Lite
         {
             CreateCacheFolder();
 
-            //保存数据
-            StringBuilder citiesSb = new();
-            StringBuilder cityLinksSb = new();
-            SaveCities.ToList().ForEach(item =>
-            {
-                citiesSb.AppendLine(item.Key);
-                cityLinksSb.AppendLine(item.Value);
-            });
-            using (var streamWriter = new StreamWriter(CitiesFile))
-            {
-                streamWriter.Write(citiesSb.ToString());
-            }
-            using (var streamWriter = new StreamWriter(CityLinksFile))
-            {
-                streamWriter.Write(cityLinksSb.ToString());
-            }
+            File.WriteAllLines(citiesFile, SaveCities.Keys.ToList());
+            File.WriteAllLines(cityLinksFile, SaveCities.Values.ToList());
         }
 
         private void MainWindow_Load(object? sender, EventArgs e)
         {
             CreateCacheFolder();
 
-            if (File.Exists(CitiesFile)
-                && File.Exists(CityLinksFile)
-                && File.ReadAllLines(CitiesFile).Length == File.ReadAllLines(CityLinksFile).Length)
+            if (File.Exists(citiesFile)
+                && File.Exists(cityLinksFile)
+                && File.ReadAllLines(citiesFile).Length == File.ReadAllLines(cityLinksFile).Length)
             {
                 //读取数据
-                SaveCities = DataUtility.MergeListsToDictionary([.. File.ReadAllLines(CitiesFile)], [.. File.ReadAllLines(CityLinksFile)]);
+                SaveCities = DataUtility.MergeListsToDictionary([.. File.ReadAllLines(citiesFile)], [.. File.ReadAllLines(cityLinksFile)]);
 
                 //更新列表
                 citiesListBox.Items.Clear();
-                citiesListBox.Items.AddRange([.. SaveCities.Keys]);
+                citiesListBox.Items.AddRange([.. SaveCities.Keys.ToList().TruncateToFitWidth(citiesListBox.Width, citiesListBox.Font)]);
 
                 if (citiesListBox.Items.Count > 0)
                 {
@@ -313,9 +371,9 @@ namespace Moji_Lite
         private void Welcome()
         {
             richTextBox1.Clear();
-            richTextBox1.AppendText("欢迎使用 Moji Lite\r\n");
+            richTextBox1.InsertText("欢迎使用 Moji Lite\r\n", null, 24);
             richTextBox1.AppendText("单击\"添加\"以选择你的城市\r\n");
-            richTextBox1.AppendText("仓库地址: https://github.com/miniyu157/MojiLite");
+            richTextBox1.AppendText($"仓库地址: {githubLink}");
         }
 
         internal void ShowMessage(string? content, string? title)

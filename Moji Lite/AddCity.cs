@@ -1,6 +1,5 @@
 ﻿using KlxPiaoAPI;
 using KlxPiaoControls;
-using System.Text;
 
 namespace Moji_Lite
 {
@@ -9,6 +8,7 @@ namespace Moji_Lite
         private readonly MainWindow mainWindow;
 
         private const string requestLink = "https://tianqi.moji.com/weather/china";
+        private const string linkPrefix = "https://tianqi.moji.com/";
         private readonly string cacheCitiesFile = $"{Path.Combine(Application.StartupPath, "cache/Cities.cache")}";
         private readonly string cacheCityLinksFile = $"{Path.Combine(Application.StartupPath, "cache/CityLinks.cache")}";
 
@@ -25,21 +25,52 @@ namespace Moji_Lite
             citiesListBox.SelectedIndexChanged += CityListBox_SelectedIndexChanged;
             searchTextBox.TextChanged += SearchTextBox_TextChanged;
             refreshLinkLabel.LinkClicked += RefreshLinkLabel_LinkClicked;
+            citiesListBox.DrawItem += CitiesListBox_DrawItem;
             mainWindow = parentForm;
+
+            citiesListBox.DrawMode = DrawMode.OwnerDrawFixed;
+            citiesListBox.ItemHeight = 20;
+        }
+
+        private void CitiesListBox_DrawItem(object? sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+
+            //清除背景
+            e.DrawBackground();
+
+            //设置绘制区域
+            var itemText = citiesListBox.Items[e.Index].ToString();
+            Font? font = e.Font;
+            if (font != null)
+            {
+                var textSize = e.Graphics.MeasureString(itemText, font);
+
+                //计算文本的居中位置
+                var textX = e.Bounds.X + (e.Bounds.Width - textSize.Width) / 2;
+                var textY = e.Bounds.Y + (e.Bounds.Height - textSize.Height) / 2;
+
+                //如果是选中项，设置背景色为蓝色，前景色为绿色
+                if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+                {
+                    e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(220, 220, 220)), e.Bounds); //设置背景色
+                    e.Graphics.DrawString(itemText, font, Brushes.Black, textX, textY); //设置前景色
+                }
+                else
+                {
+                    e.Graphics.DrawString(itemText, font, Brushes.Black, textX, textY); //默认前景色
+                }
+
+                //绘制焦点矩形（如果需要）
+                e.DrawFocusRectangle();
+            }
         }
 
         //重新加载列表
         private void RefreshLinkLabel_LinkClicked(object? sender, LinkLabelLinkClickedEventArgs e)
         {
-            if (File.Exists(cacheCitiesFile))
-            {
-                File.Delete(cacheCitiesFile);
-            }
-
-            if (File.Exists(cacheCityLinksFile))
-            {
-                File.Delete(cacheCityLinksFile);
-            }
+            if (File.Exists(cacheCitiesFile)) File.Delete(cacheCitiesFile);
+            if (File.Exists(cacheCityLinksFile)) File.Delete(cacheCityLinksFile);
 
             CloseForm();
             mainWindow.addCityBut.PerformClick();
@@ -82,7 +113,7 @@ namespace Moji_Lite
 
             if (mainWindow.SaveCities.TryAdd(key, value))
             {
-                mainWindow.citiesListBox.Items.Add(key);
+                mainWindow.citiesListBox.Items.Add(key.TruncateStringToFitWidth(mainWindow.citiesListBox.Width, mainWindow.citiesListBox.Font));
             }
         }
 
@@ -112,7 +143,7 @@ namespace Moji_Lite
                 }
                 List<string> provinceOriginalList = originalText.ExtractBetween("<div class=\"city_title\">全部省份</div>", "</div>").ExtractAllBetween("<li>", "</li>");
                 List<string> provinceList = provinceOriginalList.Select(item => item.ExtractBetween(">", "<")).ToList();
-                List<string> provinceLinkList = provinceOriginalList.Select(item => "https://tianqi.moji.com/" + item.ExtractBetween("<a href=\"", "\"")).ToList();
+                List<string> provinceLinkList = provinceOriginalList.Select(item => linkPrefix + item.ExtractBetween("<a href=\"", "\"")).ToList();
                 Dictionary<string, string> provinceDataList = DataUtility.MergeListsToDictionary(provinceList, provinceLinkList);
 
                 List<string> cityList = [];
@@ -145,21 +176,8 @@ namespace Moji_Lite
                 cityData = DataUtility.MergeListsToDictionary(cityList, cityLinkList);
 
                 //缓存数据
-                StringBuilder citiesSb = new();
-                StringBuilder cityLinksSb = new();
-                cityData.ToList().ForEach(item =>
-                {
-                    citiesSb.AppendLine(item.Key);
-                    cityLinksSb.AppendLine(item.Value);
-                });
-                using (var streamWriter = new StreamWriter(cacheCitiesFile))
-                {
-                    streamWriter.Write(citiesSb.ToString());
-                }
-                using (var streamWriter = new StreamWriter(cacheCityLinksFile))
-                {
-                    streamWriter.Write(cityLinksSb.ToString());
-                }
+                File.WriteAllLines(cacheCitiesFile, cityData.Keys.ToList());
+                File.WriteAllLines(cacheCityLinksFile, cityData.Values.ToList());
             }
 
             //更新列表

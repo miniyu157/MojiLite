@@ -2,20 +2,20 @@
 
 ![icon](Moji%20Lite/appicon.ico)
 
-è½»é‡çº§å¢¨è¿¹å¤©æ°”PCç«¯
+ÇáÁ¿¼¶Ä«¼£ÌìÆøPC¶Ë
 
-## ä½¿ç”¨
+## Ê¹ÓÃ
 
-- å•å‡» ```æ·»åŠ åŸå¸‚``` ä»¥ä½¿ç”¨ï¼Œå¯ä»¥åœ¨ [releases](https://github.com/miniyu157/MojiLite/releases) é¡µé¢ä¸‹è½½
+- µ¥»÷ ```Ìí¼Ó³ÇÊĞ``` ÒÔÊ¹ÓÃ£¬¿ÉÒÔÔÚ [releases](https://github.com/miniyu157/MojiLite/releases) Ò³ÃæÏÂÔØ
 
-## ç»†èŠ‚
+## Ï¸½Ú
 
-- ç¼“å­˜æ–‡ä»¶ä½äº ```\cache``` æ–‡ä»¶å¤¹ä¸­ï¼ŒåŒ…å«ç¼“å­˜çš„å›¾åƒã€åŸå¸‚åˆ—è¡¨ç­‰
-- æ·»åŠ åŸå¸‚æ—¶æ”¯æŒæ‹¼éŸ³æœç´¢
-- ä½¿ç”¨äº† [KlxPiao - KlxPiaoAPI](https://github.com/miniyu157/KlxPiao) ä¸­çš„æ•°ä¸ªæ–¹æ³• (ä¾‹å¦‚å­—ç¬¦ä¸²è§£æå’Œæå–ï¼Œæ•°æ®å¤„ç†ã€å›¾åƒå¤„ç†ç­‰)
-- ä½¿ç”¨äº†æ§ä»¶åº“ [KlxPiao - KlxPiaoControl](https://github.com/miniyu157/KlxPiao)
+- »º´æÎÄ¼şÎ»ÓÚ ```\cache``` ÎÄ¼ş¼ĞÖĞ£¬°üº¬»º´æµÄÍ¼Ïñ¡¢³ÇÊĞÁĞ±íµÈ
+- Ìí¼Ó³ÇÊĞÊ±Ö§³ÖÆ´ÒôËÑË÷
+- Ê¹ÓÃÁË [KlxPiao - KlxPiaoAPI](https://github.com/miniyu157/KlxPiao) ÖĞµÄÊı¸ö·½·¨ (ÀıÈç×Ö·û´®½âÎöºÍÌáÈ¡£¬Êı¾İ´¦Àí¡¢Í¼Ïñ´¦ÀíµÈ)
+- Ê¹ÓÃÁË¿Ø¼ş¿â [KlxPiao - KlxPiaoControl](https://github.com/miniyu157/KlxPiao)
 
-## é¢„è§ˆ
+## Ô¤ÀÀ
 
 ![home](Screenshot/home.png)
 
