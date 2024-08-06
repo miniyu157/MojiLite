@@ -35,18 +35,26 @@ namespace Moji_Lite
             citiesListBox = new ListBox();
             richTextBox1 = new RichTextBox();
             panel1 = new KlxPiaoPanel();
+            themeBut = new Button();
             panel2 = new KlxPiaoPanel();
+            downItemBut = new Button();
+            upItemBut = new Button();
+            panel3 = new Panel();
+            settingBut = new Button();
+            homeBut = new Button();
+            refreshBut = new Button();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
+            panel3.SuspendLayout();
             SuspendLayout();
             // 
             // addCityBut
             // 
             addCityBut.FlatStyle = FlatStyle.System;
             addCityBut.Font = new Font("等线", 9F);
-            addCityBut.Location = new Point(593, 38);
+            addCityBut.Location = new Point(765, 38);
             addCityBut.Name = "addCityBut";
-            addCityBut.Size = new Size(88, 33);
+            addCityBut.Size = new Size(84, 33);
             addCityBut.TabIndex = 7;
             addCityBut.Text = "添加";
             // 
@@ -54,9 +62,9 @@ namespace Moji_Lite
             // 
             delCityBut.FlatStyle = FlatStyle.System;
             delCityBut.Font = new Font("等线", 9F);
-            delCityBut.Location = new Point(499, 38);
+            delCityBut.Location = new Point(675, 38);
             delCityBut.Name = "delCityBut";
-            delCityBut.Size = new Size(88, 33);
+            delCityBut.Size = new Size(84, 33);
             delCityBut.TabIndex = 8;
             delCityBut.Text = "删除";
             // 
@@ -68,7 +76,7 @@ namespace Moji_Lite
             citiesListBox.ItemHeight = 14;
             citiesListBox.Location = new Point(1, 5);
             citiesListBox.Name = "citiesListBox";
-            citiesListBox.Size = new Size(180, 308);
+            citiesListBox.Size = new Size(172, 392);
             citiesListBox.TabIndex = 9;
             // 
             // richTextBox1
@@ -79,7 +87,7 @@ namespace Moji_Lite
             richTextBox1.Location = new Point(3, 3);
             richTextBox1.Name = "richTextBox1";
             richTextBox1.ScrollBars = RichTextBoxScrollBars.Vertical;
-            richTextBox1.Size = new Size(475, 366);
+            richTextBox1.Size = new Size(651, 466);
             richTextBox1.TabIndex = 17;
             richTextBox1.Text = "";
             richTextBox1.WordWrap = false;
@@ -92,8 +100,17 @@ namespace Moji_Lite
             panel1.IsEnableShadow = false;
             panel1.Location = new Point(12, 38);
             panel1.Name = "panel1";
-            panel1.Size = new Size(481, 372);
+            panel1.Size = new Size(657, 472);
             panel1.TabIndex = 21;
+            // 
+            // themeBut
+            // 
+            themeBut.BackgroundImageLayout = ImageLayout.Zoom;
+            themeBut.Location = new Point(90, 0);
+            themeBut.Name = "themeBut";
+            themeBut.Size = new Size(24, 24);
+            themeBut.TabIndex = 18;
+            themeBut.UseVisualStyleBackColor = true;
             // 
             // panel2
             // 
@@ -101,17 +118,77 @@ namespace Moji_Lite
             panel2.Controls.Add(citiesListBox);
             panel2.CornerRadius = new KlxPiaoAPI.CornerRadius(12F, 12F, 12F, 12F);
             panel2.IsEnableShadow = false;
-            panel2.Location = new Point(499, 77);
+            panel2.Location = new Point(675, 106);
             panel2.Name = "panel2";
-            panel2.Size = new Size(182, 333);
+            panel2.Size = new Size(174, 404);
             panel2.TabIndex = 22;
+            // 
+            // downItemBut
+            // 
+            downItemBut.Font = new Font("等线", 9F);
+            downItemBut.Location = new Point(60, 0);
+            downItemBut.Name = "downItemBut";
+            downItemBut.Size = new Size(24, 24);
+            downItemBut.TabIndex = 26;
+            downItemBut.Text = "↓";
+            // 
+            // upItemBut
+            // 
+            upItemBut.Font = new Font("等线", 9F);
+            upItemBut.Location = new Point(30, 0);
+            upItemBut.Name = "upItemBut";
+            upItemBut.Size = new Size(24, 24);
+            upItemBut.TabIndex = 27;
+            upItemBut.Text = "↑";
+            // 
+            // panel3
+            // 
+            panel3.Controls.Add(settingBut);
+            panel3.Controls.Add(homeBut);
+            panel3.Controls.Add(refreshBut);
+            panel3.Controls.Add(themeBut);
+            panel3.Controls.Add(upItemBut);
+            panel3.Controls.Add(downItemBut);
+            panel3.Location = new Point(675, 77);
+            panel3.Name = "panel3";
+            panel3.Size = new Size(174, 23);
+            panel3.TabIndex = 31;
+            // 
+            // settingBut
+            // 
+            settingBut.BackgroundImageLayout = ImageLayout.Zoom;
+            settingBut.Location = new Point(150, 0);
+            settingBut.Name = "settingBut";
+            settingBut.Size = new Size(24, 24);
+            settingBut.TabIndex = 30;
+            settingBut.UseVisualStyleBackColor = true;
+            // 
+            // homeBut
+            // 
+            homeBut.BackgroundImageLayout = ImageLayout.Zoom;
+            homeBut.Location = new Point(120, 0);
+            homeBut.Name = "homeBut";
+            homeBut.Size = new Size(24, 24);
+            homeBut.TabIndex = 29;
+            homeBut.UseVisualStyleBackColor = true;
+            // 
+            // refreshBut
+            // 
+            refreshBut.BackgroundImageLayout = ImageLayout.Zoom;
+            refreshBut.Location = new Point(0, 0);
+            refreshBut.Name = "refreshBut";
+            refreshBut.Size = new Size(24, 24);
+            refreshBut.TabIndex = 28;
+            refreshBut.UseVisualStyleBackColor = true;
             // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(693, 423);
+            BackgroundImageLayout = ImageLayout.Zoom;
+            ClientSize = new Size(861, 522);
+            Controls.Add(panel3);
             Controls.Add(panel2);
             Controls.Add(panel1);
             Controls.Add(delCityBut);
@@ -123,6 +200,7 @@ namespace Moji_Lite
             TitleTextAlign = HorizontalAlignment.Center;
             panel1.ResumeLayout(false);
             panel2.ResumeLayout(false);
+            panel3.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -134,5 +212,12 @@ namespace Moji_Lite
         private RichTextBox richTextBox1;
         private KlxPiaoPanel panel1;
         private KlxPiaoPanel panel2;
+        internal Button downItemBut;
+        internal Button upItemBut;
+        private Panel panel3;
+        private Button themeBut;
+        private Button refreshBut;
+        private Button homeBut;
+        private Button settingBut;
     }
 }

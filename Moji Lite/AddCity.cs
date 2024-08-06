@@ -9,8 +9,6 @@ namespace Moji_Lite
 
         private const string requestLink = "https://tianqi.moji.com/weather/china";
         private const string linkPrefix = "https://tianqi.moji.com/";
-        private readonly string cacheCitiesFile = $"{Path.Combine(Application.StartupPath, "cache/Cities.cache")}";
-        private readonly string cacheCityLinksFile = $"{Path.Combine(Application.StartupPath, "cache/CityLinks.cache")}";
 
         private Dictionary<string, string> cityData = [];
         private Dictionary<string, string> searchCityData = [];
@@ -28,6 +26,8 @@ namespace Moji_Lite
             citiesListBox.DrawItem += CitiesListBox_DrawItem;
             mainWindow = parentForm;
 
+            TitleBoxBackColor = mainWindow.TitleBoxBackColor;
+            TitleBoxForeColor = mainWindow.TitleBoxForeColor;
             citiesListBox.DrawMode = DrawMode.OwnerDrawFixed;
             citiesListBox.ItemHeight = 20;
         }
@@ -69,8 +69,8 @@ namespace Moji_Lite
         //重新加载列表
         private void RefreshLinkLabel_LinkClicked(object? sender, LinkLabelLinkClickedEventArgs e)
         {
-            if (File.Exists(cacheCitiesFile)) File.Delete(cacheCitiesFile);
-            if (File.Exists(cacheCityLinksFile)) File.Delete(cacheCityLinksFile);
+            if (File.Exists(mainWindow.cacheCitiesFile)) File.Delete(mainWindow.cacheCitiesFile);
+            if (File.Exists(mainWindow.cacheCityLinksFile)) File.Delete(mainWindow.cacheCityLinksFile);
 
             CloseForm();
             mainWindow.addCityBut.PerformClick();
@@ -124,12 +124,12 @@ namespace Moji_Lite
             cts = new();
             var token = cts.Token;
 
-            if (File.Exists(cacheCitiesFile)
-                && File.Exists(cacheCityLinksFile)
-                && File.ReadAllLines(cacheCitiesFile).Length == File.ReadAllLines(cacheCityLinksFile).Length)
+            if (File.Exists(mainWindow.cacheCitiesFile)
+                && File.Exists(mainWindow.cacheCityLinksFile)
+                && File.ReadAllLines(mainWindow.cacheCitiesFile).Length == File.ReadAllLines(mainWindow.cacheCityLinksFile).Length)
             {
                 //读取缓存
-                cityData = DataUtility.MergeListsToDictionary([.. File.ReadAllLines(cacheCitiesFile)], [.. File.ReadAllLines(cacheCityLinksFile)]);
+                cityData = DataUtility.MergeListsToDictionary([.. File.ReadAllLines(mainWindow.cacheCitiesFile)], [.. File.ReadAllLines(mainWindow.cacheCityLinksFile)]);
             }
             else
             {
@@ -176,8 +176,8 @@ namespace Moji_Lite
                 cityData = DataUtility.MergeListsToDictionary(cityList, cityLinkList);
 
                 //缓存数据
-                File.WriteAllLines(cacheCitiesFile, cityData.Keys.ToList());
-                File.WriteAllLines(cacheCityLinksFile, cityData.Values.ToList());
+                File.WriteAllLines(mainWindow.cacheCitiesFile, cityData.Keys.ToList());
+                File.WriteAllLines(mainWindow.cacheCityLinksFile, cityData.Values.ToList());
             }
 
             //更新列表

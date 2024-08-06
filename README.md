@@ -12,11 +12,14 @@
 
 - 缓存文件位于 ```\cache``` 文件夹中，包含缓存的图像、城市列表等
 - 添加城市时支持拼音搜索
-- 使用了 [KlxPiao - KlxPiaoAPI](https://github.com/miniyu157/KlxPiao) 中的数个方法 (例如字符串解析和提取，数据处理、图像处理等)
-- 使用了控件库 [KlxPiao - KlxPiaoControl](https://github.com/miniyu157/KlxPiao)
+- 使用了库 [KlxPiao - KlxPiaoAPI](https://github.com/miniyu157/KlxPiao) 用于字符串解析和提取，数据处理、图像处理等
+- 使用了库 [KlxPiao - KlxPiaoControl](https://github.com/miniyu157/KlxPiao)
+- 使用了库 [FabioJe/INIParser](https://github.com/FabioJe/INIParser) 用于解析配置文件
 
 ## 预览
 
 ![home](Screenshot/home.png)
+
+![weather](Screenshot/weather.png)
 
 ![addcity](Screenshot/addcity.png)
