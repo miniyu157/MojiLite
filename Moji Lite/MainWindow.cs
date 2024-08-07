@@ -28,7 +28,7 @@ namespace Moji_Lite
         public MainWindow()
         {
             InitializeComponent();
-
+            
             ContextMenuStrip themeMenuStrip = new()
             {
                 Font = TitleFont

@@ -1,5 +1,12 @@
 # 更新日志
 
+### 版本 1.0.4
+#### Releases 更新
+- 跟随 [KlxPiaoControls](https://github.com/miniyu157/KlxPiao) 更新
+- 代码没有变更，新的发行版可以在 [releases](https://github.com/miniyu157/MojiLite/releases) 页面下载
+
+---
+
 ### 版本 1.0.3
 #### 配置文件夹迁移
 - ```\cache``` -> ```\config```
