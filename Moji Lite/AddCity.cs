@@ -36,32 +36,24 @@ namespace Moji_Lite
         {
             if (e.Index < 0) return;
 
-            //清除背景
             e.DrawBackground();
 
-            //设置绘制区域
             var itemText = citiesListBox.Items[e.Index].ToString();
             Font? font = e.Font;
             if (font != null)
             {
                 var textSize = e.Graphics.MeasureString(itemText, font);
+                var textPos = LayoutUtilities.CalculateAlignedPosition(e.Bounds, textSize, ContentAlignment.MiddleCenter);
 
-                //计算文本的居中位置
-                var textX = e.Bounds.X + (e.Bounds.Width - textSize.Width) / 2;
-                var textY = e.Bounds.Y + (e.Bounds.Height - textSize.Height) / 2;
-
-                //如果是选中项，设置背景色为蓝色，前景色为绿色
                 if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
                 {
-                    e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(220, 220, 220)), e.Bounds); //设置背景色
-                    e.Graphics.DrawString(itemText, font, Brushes.Black, textX, textY); //设置前景色
+                    e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(220, 220, 220)), e.Bounds);
+                    e.Graphics.DrawString(itemText, font, Brushes.Black, textPos.X, textPos.Y);
                 }
                 else
                 {
-                    e.Graphics.DrawString(itemText, font, Brushes.Black, textX, textY); //默认前景色
+                    e.Graphics.DrawString(itemText, font, Brushes.Black, textPos.X, textPos.Y);
                 }
-
-                //绘制焦点矩形（如果需要）
                 e.DrawFocusRectangle();
             }
         }

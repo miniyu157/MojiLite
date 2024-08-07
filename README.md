@@ -23,3 +23,5 @@
 ![weather](Screenshot/weather.png)
 
 ![addcity](Screenshot/addcity.png)
+
+![setting](Screenshot/setting.png)

@@ -10,24 +10,43 @@ namespace Moji_Lite
         {
             InitializeComponent();
 
-            FormClosed += Setting_FormClosed;
-            removeCacheLinkLabel.LinkClicked += RemoveCacheLinkLabel_LinkClicked;
-            githubLinkLabel.LinkClicked += GithubLinkLabel_LinkClicked;
-
             mainWindow = parentForm;
             showVerLabel.Text = $"Version: {MainWindow.GetProductVersion()}";
 
-            switch (mainWindow.ListLayout)
-            {
-                case "two-column":
-                    listLayout_Two_Radiu.Checked = true;
-                    listLayout_Single_Radiu.Checked = false;
-                    break;
+            //功能事件
+            removeCacheLinkLabel.LinkClicked += RemoveCacheLinkLabel_LinkClicked;
+            githubLinkLabel.LinkClicked += GithubLinkLabel_LinkClicked;
 
-                case "single-column":
-                    listLayout_Two_Radiu.Checked = false;
-                    listLayout_Single_Radiu.Checked = true;
-                    break;
+            InitializeConfig(
+                listLayout_Two_Radiu,
+                listLayout_Single_Radiu,
+                "two-column",
+                "single-column",
+                mainWindow.ListLayout,
+                value => mainWindow.ListLayout = value
+            );
+
+            InitializeConfig(
+                highlightToday_True_Radiu,
+                highlightToday_False_Radiu,
+                "true",
+                "false",
+                mainWindow.HighlightToday,
+                value => mainWindow.HighlightToday = value
+            );
+        }
+
+        private void InitializeConfig(RadioButton trueRadio, RadioButton falseRadio, string trueValue, string falseValue, string? getValue, Action<string> setValue)
+        {
+            trueRadio.Checked = getValue == trueValue;
+            falseRadio.Checked = getValue == falseValue;
+            trueRadio.CheckedChanged += (sender, e) => RadioButton_CheckedChanged(trueRadio, trueValue, falseValue, setValue);
+            falseRadio.CheckedChanged += (sender, e) => RadioButton_CheckedChanged(trueRadio, trueValue, falseValue, setValue);
+
+            void RadioButton_CheckedChanged(RadioButton trueRadio, string trueValue, string falseValue, Action<string> setValue)
+            {
+                setValue(trueRadio.Checked ? trueValue : falseValue);
+                mainWindow.refreshBut.PerformClick();
             }
         }
 
@@ -47,11 +66,6 @@ namespace Moji_Lite
             }
 
             mainWindow.ShowMessage("清除缓存完成。", Application.ProductName);
-        }
-
-        private void Setting_FormClosed(object? sender, FormClosedEventArgs e)
-        {
-            mainWindow.ListLayout = listLayout_Single_Radiu.Checked ? "single-column" : "two-column";
         }
     }
 }

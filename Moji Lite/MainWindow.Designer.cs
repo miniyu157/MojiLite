@@ -198,6 +198,7 @@ namespace Moji_Lite
             TitleBoxBackColor = Color.Linen;
             TitleFont = new Font("等线", 10.5F, FontStyle.Regular, GraphicsUnit.Point, 134);
             TitleTextAlign = HorizontalAlignment.Center;
+            TitleTextOffset = new Point(0, 1);
             panel1.ResumeLayout(false);
             panel2.ResumeLayout(false);
             panel3.ResumeLayout(false);
@@ -216,7 +217,7 @@ namespace Moji_Lite
         internal Button upItemBut;
         private Panel panel3;
         private Button themeBut;
-        private Button refreshBut;
+        internal Button refreshBut;
         private Button homeBut;
         private Button settingBut;
     }

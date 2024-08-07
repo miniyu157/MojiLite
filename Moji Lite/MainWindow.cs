@@ -4,6 +4,7 @@ using KlxPiaoControls;
 using Moji_Lite.Properties;
 using System.Diagnostics;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Moji_Lite
 {
@@ -12,7 +13,9 @@ namespace Moji_Lite
         private CancellationTokenSource? cts;
         private int[] customColors = [];
         internal Dictionary<string, string> SaveCities { get; set; } = [];
+
         internal string? ListLayout { get; set; } = "two-column";
+        internal string? HighlightToday { get; set; } = "true";
 
         private const char FULL_WIDTH_SPACE = '　';
         internal const string githubLink = "https://github.com/miniyu157/MojiLite";
@@ -28,7 +31,7 @@ namespace Moji_Lite
         public MainWindow()
         {
             InitializeComponent();
-            
+
             ContextMenuStrip themeMenuStrip = new()
             {
                 Font = TitleFont
@@ -70,7 +73,8 @@ namespace Moji_Lite
                 Color.FromArgb(244, 195, 196),
                 Color.FromArgb(208, 221, 245),
                 Color.FromArgb(248, 225, 233),
-                Color.FromArgb(203, 228, 227)
+                Color.FromArgb(203, 228, 227),
+                Color.FromArgb(231, 227, 253)
             ];
             foreach (Color color in colors)
             {
@@ -96,22 +100,16 @@ namespace Moji_Lite
 
             CreateCache();
 
+            //读取配置文件
             IniFile ini = new(configFile);
             string? themeColor = ini["ColorConfig", "Color"];
             string? originalCustomColors = ini["ColorConfig", "CustomColors"];
             string? listLayout = ini["Config", "ListLayout"];
-            if (originalCustomColors != null && originalCustomColors != "")
-            {
-                customColors = originalCustomColors.Split(',').Select(item => item.Trim()).Select(item => int.Parse(item)).ToArray();
-            }
-            if (themeColor != null)
-            {
-                SetThemeColor(ColorProcessor.FromHex(themeColor));
-            }
-            if (listLayout != null)
-            {
-                ListLayout = listLayout;
-            }
+            string? highlightToday = ini["Config", "HighlightToday"];
+            if (originalCustomColors != null && originalCustomColors != "")  customColors = originalCustomColors.Split(',').Select(item => item.Trim()).Select(item => int.Parse(item)).ToArray();
+            if (themeColor != null) SetGlobalTheme(ColorProcessor.FromHex(themeColor), false);
+            if (listLayout != null) ListLayout = listLayout;
+            if (highlightToday != null) HighlightToday = highlightToday;
 
             if (File.Exists(citiesFile)
                 && File.Exists(cityLinksFile)
@@ -183,15 +181,8 @@ namespace Moji_Lite
                     color = ((Bitmap)bitmap).GetPixel(1, 1);
                 }
 
-                SetThemeColor(color);
+                SetGlobalTheme(color, false);
             }
-        }
-
-        //使用 KlxPiaoForm.SetGlobalTheme 方法会卡死，于是另外写了个方法
-        private void SetThemeColor(Color color)
-        {
-            TitleBoxBackColor = color;
-            TitleBoxForeColor = ColorProcessor.GetBrightness(color) > 127 ? Color.Black : Color.White;
         }
 
         //最好是交换相邻的项目
@@ -231,7 +222,6 @@ namespace Moji_Lite
                 TitleBoxForeColor = TitleBoxForeColor
             };
             setting.ShowDialog();
-            refreshBut.PerformClick();
         }
         #endregion
 
@@ -265,32 +255,24 @@ namespace Moji_Lite
         {
             if (e.Index < 0) return;
 
-            //清除背景
             e.DrawBackground();
 
-            //设置绘制区域
             var itemText = citiesListBox.Items[e.Index].ToString();
             Font? font = e.Font;
             if (font != null)
             {
                 var textSize = e.Graphics.MeasureString(itemText, font);
+                var textPos = LayoutUtilities.CalculateAlignedPosition(e.Bounds, textSize, ContentAlignment.MiddleCenter);
 
-                //计算文本的居中位置
-                var textX = e.Bounds.X + (e.Bounds.Width - textSize.Width) / 2;
-                var textY = e.Bounds.Y + (e.Bounds.Height - textSize.Height) / 2;
-
-                //如果是选中项，设置背景色为蓝色，前景色为绿色
                 if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
                 {
-                    e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(220, 220, 220)), e.Bounds); //设置背景色
-                    e.Graphics.DrawString(itemText, font, Brushes.Black, textX, textY); //设置前景色
+                    e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(220, 220, 220)), e.Bounds);
+                    e.Graphics.DrawString(itemText, font, Brushes.Black, textPos.X, textPos.Y);
                 }
                 else
                 {
-                    e.Graphics.DrawString(itemText, font, Brushes.Black, textX, textY); //默认前景色
+                    e.Graphics.DrawString(itemText, font, Brushes.Black, textPos.X, textPos.Y);
                 }
-
-                //绘制焦点矩形（如果需要）
                 e.DrawFocusRectangle();
             }
         }
@@ -331,11 +313,17 @@ namespace Moji_Lite
                     string temperature = _data1.ExtractBetween("<em>", "</em>");
                     string icon = _data1.ExtractBetween("<img src=\"", "\"");
                     string weather = _data1.ExtractBetween("<b>", "</b>");
-                    string updateTime = _data1.ExtractBetween("<strong class=\"info_uptime\">", "</strong>");
+                    string originalUpdateTime = _data1.ExtractBetween("<strong class=\"info_uptime\">", "</strong>");
+                    string updateTimePattern = @"(.+?)(\d+:\d+)(.+?)";
+                    string updateTimeReplacement = "$1 $2 $3";
+                    string updateTime = Regex.Replace(originalUpdateTime, updateTimePattern, updateTimeReplacement);
 
                     string _data2 = originalText.ExtractBetween("<div class=\"wea_about clearfix\">", "</div>");
                     string humidity = _data2.ExtractBetween("<span>", "</span>");
-                    string windSpeed = _data2.ExtractBetween("<em>", "</em>");
+                    string originalWindSpeed = _data2.ExtractBetween("<em>", "</em>");
+                    string windSpeedPattern = @"(.+?)(\d+)(.+?)";
+                    string windSpeedReplacement = "$1 $2 $3";
+                    string windSpeed = Regex.Replace(originalWindSpeed, windSpeedPattern, windSpeedReplacement);
 
                     string _data3 = originalText.ExtractBetween("<div class=\"wea_tips clearfix\">", "</div>");
                     string tip = _data3.ExtractBetween("<em>", "</em>");
@@ -421,6 +409,13 @@ namespace Moji_Lite
                     richTextBox.AppendText($"{link}\r\n");
 
                     richTextBox.AppendText($"{new string('-', 300)}\r\n");
+
+                    bool isHighlightToday = HighlightToday switch
+                    {
+                        "true" => true,
+                        "false" => false,
+                        _ => true
+                    };
                     switch (ListLayout)
                     {
                         case "two-column":
@@ -428,7 +423,7 @@ namespace Moji_Lite
                             {
                                 void AddItem(int index)
                                 {
-                                    Color showColor = index == 1 ? todayColor : dayColor;
+                                    Color showColor = index == 1 && isHighlightToday ? todayColor : dayColor;
                                     richTextBox.InsertText($"{week[index]} {day[index]} ", showColor);
                                     richTextBox.AppendText($"{morningWeather[index]}({morningTemperature[index]})");
                                     RichTextBoxAddImage(richTextBox, morningIcon[index], cachePath, smallIconSize.Width, smallIconSize.Height);
@@ -445,7 +440,7 @@ namespace Moji_Lite
                         case "single-column":
                             for (int i = 0; i < day.Count; i++)
                             {
-                                Color showColor = i == 1 ? todayColor : dayColor;
+                                Color showColor = i == 1 && isHighlightToday ? todayColor : dayColor;
                                 richTextBox.InsertText($"{week[i]} {day[i]} ", showColor);
                                 richTextBox.AppendText($"{morningWeather[i]}({morningTemperature[i]})");
                                 RichTextBoxAddImage(richTextBox, morningIcon[i], cachePath, smallIconSize.Width, smallIconSize.Height);
@@ -532,6 +527,7 @@ namespace Moji_Lite
             using var sw = new StreamWriter(configFile);
             sw.WriteLine("[Config]");
             sw.WriteLine($"ListLayout = {ListLayout}");
+            sw.WriteLine($"HighlightToday = {HighlightToday}");
             sw.WriteLine();
             sw.WriteLine("[ColorConfig]");
             sw.WriteLine($"Color = {TitleBoxBackColor.ToHex()}");
@@ -574,18 +570,9 @@ namespace Moji_Lite
 
         private void CreateCache()
         {
-            if (!Directory.Exists(cachePath))
-            {
-                Directory.CreateDirectory(cachePath);
-            }
-            if (!Directory.Exists(configPath))
-            {
-                Directory.CreateDirectory(configPath);
-            }
-            if (!File.Exists(configFile))
-            {
-                File.Create(configFile).Close();
-            }
+            if (!Directory.Exists(cachePath)) Directory.CreateDirectory(cachePath);
+            if (!Directory.Exists(configPath)) Directory.CreateDirectory(configPath);
+            if (!File.Exists(configFile)) File.Create(configFile).Close();
         }
 
         private void Welcome()
