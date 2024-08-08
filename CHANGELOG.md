@@ -1,5 +1,12 @@
 # 更新日志
 
+### 版本 1.0.6
+#### Releases 更新
+- 跟随 [KlxPiaoControls](https://github.com/miniyu157/KlxPiao) 更新
+- 代码没有变更，最新发行版可以在 [releases](https://github.com/miniyu157/MojiLite/releases) 页面下载
+
+---
+
 ### 版本 1.0.5
 #### 优化
 - 设置界面的代码逻辑优化
