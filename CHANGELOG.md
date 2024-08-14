@@ -1,5 +1,11 @@
 # 更新日志
 
+### 版本 1.0.7
+#### Releases 更新
+- 跟随 [KlxPiaoControls](https://github.com/miniyu157/KlxPiao) 更新
+
+---
+
 ### 版本 1.0.6
 #### Releases 更新
 - 跟随 [KlxPiaoControls](https://github.com/miniyu157/KlxPiao) 更新

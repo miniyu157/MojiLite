@@ -106,8 +106,8 @@ namespace Moji_Lite
             string? originalCustomColors = ini["ColorConfig", "CustomColors"];
             string? listLayout = ini["Config", "ListLayout"];
             string? highlightToday = ini["Config", "HighlightToday"];
-            if (originalCustomColors != null && originalCustomColors != "")  customColors = originalCustomColors.Split(',').Select(item => item.Trim()).Select(item => int.Parse(item)).ToArray();
-            if (themeColor != null) SetGlobalTheme(ColorProcessor.FromHex(themeColor), false);
+            if (originalCustomColors != null && originalCustomColors != "") customColors = originalCustomColors.Split(',').Select(item => item.Trim()).Select(item => int.Parse(item)).ToArray();
+            if (themeColor != null) SetThemeColor(ColorProcessor.FromHex(themeColor));
             if (listLayout != null) ListLayout = listLayout;
             if (highlightToday != null) HighlightToday = highlightToday;
 
@@ -181,7 +181,7 @@ namespace Moji_Lite
                     color = ((Bitmap)bitmap).GetPixel(1, 1);
                 }
 
-                SetGlobalTheme(color, false);
+                SetThemeColor(color);
             }
         }
 

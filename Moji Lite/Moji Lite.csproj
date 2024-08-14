@@ -8,10 +8,10 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>appicon.ico</ApplicationIcon>
-    <AssemblyVersion>1.0.6</AssemblyVersion>
-    <FileVersion>1.0.6</FileVersion>
+    <AssemblyVersion>1.0.7</AssemblyVersion>
+    <FileVersion>1.0.7</FileVersion>
 	<Copyright>KlxPiao Copyright © 2024</Copyright>
-	<Version>1.0.6</Version>
+	<Version>1.0.7</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,15 +20,7 @@
 
   <ItemGroup>
     <PackageReference Include="IniParser" Version="1.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="KlxPiaoAPI">
-      <HintPath>..\..\..\..\KlxPiao\KlxPiaoControls\bin\Release\net8.0-windows\publish\KlxPiaoAPI.dll</HintPath>
-    </Reference>
-    <Reference Include="KlxPiaoControls">
-      <HintPath>..\..\..\..\KlxPiao\KlxPiaoControls\bin\Release\net8.0-windows\publish\KlxPiaoControls.dll</HintPath>
-    </Reference>
+    <PackageReference Include="KlxPiaoControls" Version="1.2.0.3" />
   </ItemGroup>
 
   <ItemGroup>
